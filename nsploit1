@@ -1,9 +1,43 @@
 local player = game.Players.LocalPlayer
 local gui = Instance.new("ScreenGui")
 gui.Name = "NSPLO1t"
-gui.ResetOnSpawn = false
 gui.Parent = player:WaitForChild("PlayerGui")
 
+-- Loading Screen
+local loadingFrame = Instance.new("Frame")
+loadingFrame.Size = UDim2.new(1, 0, 1, 0)
+loadingFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+loadingFrame.Parent = gui
+
+local loadingText = Instance.new("TextLabel")
+loadingText.Size = UDim2.new(0.3, 0, 0.1, 0)
+loadingText.Position = UDim2.new(0.35, 0, 0.4, 0)
+loadingText.Text = "Loading..."
+loadingText.TextColor3 = Color3.new(1, 1, 1)
+loadingText.TextScaled = true
+loadingText.Font = Enum.Font.GothamBold
+loadingText.BackgroundTransparency = 1
+loadingText.Parent = loadingFrame
+
+local loadingBarBG = Instance.new("Frame")
+loadingBarBG.Size = UDim2.new(0.5, 0, 0.05, 0)
+loadingBarBG.Position = UDim2.new(0.25, 0, 0.5, 0)
+loadingBarBG.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+loadingBarBG.Parent = loadingFrame
+
+local loadingBar = Instance.new("Frame")
+loadingBar.Size = UDim2.new(0, 0, 1, 0)
+loadingBar.BackgroundColor3 = Color3.fromRGB(0, 0, 128) -- Navy Blue
+loadingBar.Parent = loadingBarBG
+
+-- Animate Loading Bar
+for i = 1, 100 do
+    loadingBar.Size = UDim2.new(i / 100, 0, 1, 0)
+    wait(0.02)
+end
+loadingFrame:Destroy()
+
+-- Main Button
 local button = Instance.new("TextButton")
 button.Size = UDim2.new(0, 80, 0, 40)
 button.Position = UDim2.new(0.1, 0, 0.1, 0)
@@ -17,6 +51,7 @@ local buttonCorner = Instance.new("UICorner")
 buttonCorner.CornerRadius = UDim.new(0.3, 0)
 buttonCorner.Parent = button
 
+-- Main UI
 local nsFrame = Instance.new("Frame")
 nsFrame.Size = UDim2.new(0.4, 0, 0.4, 0)
 nsFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
@@ -28,137 +63,102 @@ local nsFrameCorner = Instance.new("UICorner")
 nsFrameCorner.CornerRadius = UDim.new(0.1, 0)
 nsFrameCorner.Parent = nsFrame
 
-local tabNames = {"Home", "Tp", "Misc", "Settings"}
-local tabButtons = {}
+-- Home Tab
+local homeTab = Instance.new("Frame")
+homeTab.Size = UDim2.new(1, 0, 1, 0)
+homeTab.Parent = nsFrame
 
-for i, tabName in ipairs(tabNames) do
-    local tabButton = Instance.new("TextButton")
-    tabButton.Size = UDim2.new(0.1, 0, 0.08, 0)
-    tabButton.Position = UDim2.new(0.02, 0, 0.25 + (i - 1) * 0.1, 0)
-    tabButton.Text = tabName
-    tabButton.TextScaled = true
-    tabButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    tabButton.TextColor3 = Color3.fromRGB(0, 150, 255)
-    tabButton.Parent = nsFrame
+local nameText = Instance.new("TextLabel")
+nameText.Size = UDim2.new(0.5, 0, 0.1, 0)
+nameText.Position = UDim2.new(0.02, 0, 0.02, 0)
+nameText.Text = "Welcome, " .. player.Name
+nameText.TextColor3 = Color3.fromRGB(200, 200, 200)
+nameText.TextScaled = true
+nameText.Font = Enum.Font.Gotham
+nameText.BackgroundTransparency = 1
+nameText.Parent = homeTab
 
-    local tabCorner = Instance.new("UICorner")
-    tabCorner.CornerRadius = UDim.new(0.3, 0)
-    tabCorner.Parent = tabButton
+local gameText = Instance.new("TextLabel")
+gameText.Size = UDim2.new(0.5, 0, 0.1, 0)
+gameText.Position = UDim2.new(0.02, 0, 0.12, 0)
+gameText.Text = "Game: " .. game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+gameText.TextColor3 = Color3.fromRGB(180, 180, 180)
+gameText.TextScaled = true
+gameText.Font = Enum.Font.Gotham
+gameText.BackgroundTransparency = 1
+gameText.Parent = homeTab
 
-    tabButtons[tabName] = tabButton
+-- Stats
+local fpsText = Instance.new("TextLabel")
+fpsText.Size = UDim2.new(0.3, 0, 0.1, 0)
+fpsText.Position = UDim2.new(0.02, 0, 0.25, 0)
+fpsText.Text = "FPS: Calculating..."
+fpsText.TextColor3 = Color3.fromRGB(255, 255, 255)
+fpsText.TextScaled = true
+fpsText.Font = Enum.Font.Gotham
+fpsText.BackgroundTransparency = 1
+fpsText.Parent = homeTab
+
+local pingText = Instance.new("TextLabel")
+pingText.Size = UDim2.new(0.3, 0, 0.1, 0)
+pingText.Position = UDim2.new(0.02, 0, 0.35, 0)
+pingText.Text = "Ping: Calculating..."
+pingText.TextColor3 = Color3.fromRGB(255, 255, 255)
+pingText.TextScaled = true
+pingText.Font = Enum.Font.Gotham
+pingText.BackgroundTransparency = 1
+pingText.Parent = homeTab
+
+-- TP Tab
+local tpTab = Instance.new("Frame")
+tpTab.Size = UDim2.new(1, 0, 1, 0)
+tpTab.Visible = false
+tpTab.Parent = nsFrame
+
+if game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name == "Proxima Hangout" then
+    local tpButton = Instance.new("TextButton")
+    tpButton.Size = UDim2.new(0.5, 0, 0.1, 0)
+    tpButton.Position = UDim2.new(0.25, 0, 0.4, 0)
+    tpButton.Text = "Top Cube"
+    tpButton.TextScaled = true
+    tpButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    tpButton.TextColor3 = Color3.new(1, 1, 1)
+    tpButton.Parent = tpTab
+
+    tpButton.MouseButton1Click:Connect(function()
+        local destination = game.Workspace:FindFirstChild("TeleportDestination")
+        if destination then
+            player.Character:SetPrimaryPartCFrame(destination.CFrame)
+        end
+    end)
 end
 
--- Home Tab UI
-local homeFrame = Instance.new("Frame")
-homeFrame.Size = UDim2.new(1, 0, 0.6, 0)
-homeFrame.Position = UDim2.new(0, 0, 0.3, 0)
-homeFrame.BackgroundTransparency = 1
-homeFrame.Parent = nsFrame
+-- Misc Tab
+local miscTab = Instance.new("Frame")
+miscTab.Size = UDim2.new(1, 0, 1, 0)
+miscTab.Visible = false
+miscTab.Parent = nsFrame
 
-local homeText = Instance.new("TextLabel")
-homeText.Size = UDim2.new(1, 0, 0.1, 0)
-homeText.Position = UDim2.new(0, 0, 0.05, 0)
-homeText.Text = "NS"
-homeText.TextColor3 = Color3.new(1, 1, 1)
-homeText.TextScaled = true
-homeText.Font = Enum.Font.GothamBold
-homeText.BackgroundTransparency = 1
-homeText.Parent = homeFrame
+local rejoinButton = Instance.new("TextButton")
+rejoinButton.Size = UDim2.new(0.5, 0, 0.1, 0)
+rejoinButton.Position = UDim2.new(0.25, 0, 0.4, 0)
+rejoinButton.Text = "Rejoin"
+rejoinButton.TextScaled = true
+rejoinButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+rejoinButton.TextColor3 = Color3.new(1, 1, 1)
+rejoinButton.Parent = miscTab
 
-local userFrame = Instance.new("Frame")
-userFrame.Size = UDim2.new(1, 0, 0.15, 0)
-userFrame.Position = UDim2.new(0, 0, 0.2, 0)
-userFrame.BackgroundTransparency = 1
-userFrame.Parent = homeFrame
-
--- Player Avatar Image
-local avatarImage = Instance.new("ImageLabel")
-avatarImage.Size = UDim2.new(0.2, 0, 1, 0)
-avatarImage.Position = UDim2.new(0.02, 0, 0, 0)
-avatarImage.Image = "rbxthumb://type=AvatarHeadShot&id=" .. player.UserId .. "&w=420&h=420"
-avatarImage.BackgroundTransparency = 1
-avatarImage.Parent = userFrame
-
--- Username Display
-local usernameText = Instance.new("TextLabel")
-usernameText.Size = UDim2.new(0.6, 0, 1, 0)
-usernameText.Position = UDim2.new(0.25, 0, 0, 0)
-usernameText.Text = "User: " .. player.Name
-usernameText.TextColor3 = Color3.fromRGB(255, 255, 255)
-usernameText.TextScaled = true
-usernameText.Font = Enum.Font.Gotham
-usernameText.BackgroundTransparency = 1
-usernameText.TextXAlignment = Enum.TextXAlignment.Left
-usernameText.Parent = userFrame
-
--- Game Name Display
-local gameNameText = Instance.new("TextLabel")
-gameNameText.Size = UDim2.new(1, 0, 0.07, 0)
-gameNameText.Position = UDim2.new(0.02, 0, 0.4, 0)
-gameNameText.Text = "Game: " .. game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
-gameNameText.TextColor3 = Color3.fromRGB(255, 255, 255)
-gameNameText.TextScaled = true
-gameNameText.Font = Enum.Font.Gotham
-gameNameText.BackgroundTransparency = 1
-gameNameText.TextXAlignment = Enum.TextXAlignment.Left
-gameNameText.Parent = homeFrame
-
--- Settings Tab UI
-local settingsFrame = Instance.new("Frame")
-settingsFrame.Size = UDim2.new(1, 0, 0.6, 0)
-settingsFrame.Position = UDim2.new(0, 0, 0.3, 0)
-settingsFrame.BackgroundTransparency = 1
-settingsFrame.Visible = false
-settingsFrame.Parent = nsFrame
-
-local colorTextBox = Instance.new("TextBox")
-colorTextBox.Size = UDim2.new(0.5, 0, 0.1, 0)
-colorTextBox.Position = UDim2.new(0.25, 0, 0.1, 0)
-colorTextBox.PlaceholderText = "Enter text color (RGB)"
-colorTextBox.Parent = settingsFrame
-
-local applyColorButton = Instance.new("TextButton")
-applyColorButton.Size = UDim2.new(0.5, 0, 0.1, 0)
-applyColorButton.Position = UDim2.new(0.25, 0, 0.25, 0)
-applyColorButton.Text = "Apply Color"
-applyColorButton.Parent = settingsFrame
-
-applyColorButton.MouseButton1Click:Connect(function()
-    local r, g, b = colorTextBox.Text:match("(%d+),(%d+),(%d+)")
-    if r and g and b then
-        homeText.TextColor3 = Color3.fromRGB(tonumber(r), tonumber(g), tonumber(b))
-    end
+rejoinButton.MouseButton1Click:Connect(function()
+    player:Kick("Rejoin is in development. For now, we just kick you :D")
 end)
 
-local backgroundTextBox = Instance.new("TextBox")
-backgroundTextBox.Size = UDim2.new(0.5, 0, 0.1, 0)
-backgroundTextBox.Position = UDim2.new(0.25, 0, 0.4, 0)
-backgroundTextBox.PlaceholderText = "Enter Background AssetID"
-backgroundTextBox.Parent = settingsFrame
-
-local applyBackgroundButton = Instance.new("TextButton")
-applyBackgroundButton.Size = UDim2.new(0.5, 0, 0.1, 0)
-applyBackgroundButton.Position = UDim2.new(0.25, 0, 0.55, 0)
-applyBackgroundButton.Text = "Apply Background"
-applyBackgroundButton.Parent = settingsFrame
-
-local bgImage = Instance.new("ImageLabel")
-bgImage.Size = UDim2.new(1, 0, 1, 0)
-bgImage.BackgroundTransparency = 1
-bgImage.Parent = nsFrame
-
-applyBackgroundButton.MouseButton1Click:Connect(function()
-    bgImage.Image = "rbxassetid://" .. backgroundTextBox.Text
-end)
-
-local function showTab(tab)
-    homeFrame.Visible = (tab == "Home")
-    settingsFrame.Visible = (tab == "Settings")
-end
-
-tabButtons["Home"].MouseButton1Click:Connect(function() showTab("Home") end)
-tabButtons["Settings"].MouseButton1Click:Connect(function() showTab("Settings") end)
-
+-- Tab Switching
 button.MouseButton1Click:Connect(function()
     nsFrame.Visible = not nsFrame.Visible
+end)
+
+-- FPS & Ping Update
+game:GetService("RunService").RenderStepped:Connect(function()
+    fpsText.Text = "FPS: " .. math.floor(1 / game:GetService("RunService").RenderStepped:Wait())
+    pingText.Text = "Ping: " .. player:GetNetworkPing() * 1000 .. "ms"
 end)
