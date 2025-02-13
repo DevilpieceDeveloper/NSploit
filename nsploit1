@@ -3,9 +3,9 @@ local gui = Instance.new("ScreenGui")
 gui.Name = "NSPLO1t"
 gui.Parent = player:WaitForChild("PlayerGui")
 
--- Main "NS" Button
+-- Create NS Button (Main Toggle Button)
 local button = Instance.new("TextButton")
-button.Size = UDim2.new(0, 80, 0, 40)
+button.Size = UDim2.new(0, 80, 0, 40) -- Made smaller
 button.Position = UDim2.new(0.1, 0, 0.1, 0)
 button.Text = "NS"
 button.TextScaled = true
@@ -13,21 +13,26 @@ button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 button.TextColor3 = Color3.new(1, 1, 1)
 button.Parent = gui
 
--- Create the NS frame
+-- Rounded corners for NS button
+local buttonCorner = Instance.new("UICorner")
+buttonCorner.CornerRadius = UDim.new(0.3, 0)
+buttonCorner.Parent = button
+
+-- Create NS Frame (Main UI)
 local nsFrame = Instance.new("Frame")
-nsFrame.Size = UDim2.new(0.4, 0, 0.6, 0)
-nsFrame.Position = UDim2.new(0.3, 0, 0.2, 0)
+nsFrame.Size = UDim2.new(0.4, 0, 0.4, 0)
+nsFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
 nsFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-nsFrame.BackgroundTransparency = 0
-nsFrame.Visible = false  -- Initially hidden
+nsFrame.Visible = true  -- Ensure the frame is visible
+nsFrame.BackgroundTransparency = 1 -- Start hidden for animation
 nsFrame.Parent = gui
 
--- Add a corner to the frame
+-- Rounded corners for NS Frame
 local nsFrameCorner = Instance.new("UICorner")
 nsFrameCorner.CornerRadius = UDim.new(0.1, 0)
 nsFrameCorner.Parent = nsFrame
 
--- Add version label
+-- Version Label (NS, v0.1∞)
 local versionText = Instance.new("TextLabel")
 versionText.Size = UDim2.new(0.5, 0, 0.07, 0)
 versionText.Position = UDim2.new(0.02, 0, 0.01, 0)
@@ -39,29 +44,42 @@ versionText.BackgroundTransparency = 1
 versionText.TextXAlignment = Enum.TextXAlignment.Left
 versionText.Parent = nsFrame
 
--- Add Home Text
-local homeText = Instance.new("TextLabel")
-homeText.Size = UDim2.new(1, 0, 0.6, 0)
-homeText.Position = UDim2.new(0, 0, 0.3, 0)
-homeText.Text = "NS"
-homeText.TextColor3 = Color3.new(1, 1, 1)
-homeText.TextScaled = true
-homeText.Font = Enum.Font.GothamBold
-homeText.BackgroundTransparency = 1
-homeText.Parent = nsFrame
+-- Welcome Message (Smaller)
+local welcomeText = Instance.new("TextLabel")
+welcomeText.Size = UDim2.new(0.5, 0, 0.07, 0)
+welcomeText.Position = UDim2.new(0.02, 0, 0.08, 0)
+welcomeText.Text = "Welcome, " .. player.Name
+welcomeText.TextColor3 = Color3.fromRGB(200, 200, 200)
+welcomeText.TextScaled = true
+welcomeText.Font = Enum.Font.Gotham
+welcomeText.BackgroundTransparency = 1
+welcomeText.TextXAlignment = Enum.TextXAlignment.Left
+welcomeText.Parent = nsFrame
 
--- Create Tab Buttons
+-- Game Name Label (Smaller)
+local gameText = Instance.new("TextLabel")
+gameText.Size = UDim2.new(0.5, 0, 0.06, 0)
+gameText.Position = UDim2.new(0.02, 0, 0.14, 0)
+gameText.Text = "Game: " .. game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+gameText.TextColor3 = Color3.fromRGB(180, 180, 180)
+gameText.TextScaled = true
+gameText.Font = Enum.Font.Gotham
+gameText.BackgroundTransparency = 1
+gameText.TextXAlignment = Enum.TextXAlignment.Left
+gameText.Parent = nsFrame
+
+-- Create Tab Buttons (Smaller, Left-Side)
 local tabNames = {"Home", "Tp", "Misc"}
 local tabButtons = {}
 
 for i, tabName in ipairs(tabNames) do
     local tabButton = Instance.new("TextButton")
-    tabButton.Size = UDim2.new(0.1, 0, 0.08, 0)
-    tabButton.Position = UDim2.new(0.02, 0, 0.2 + (i - 1) * 0.1, 0)
+    tabButton.Size = UDim2.new(0.1, 0, 0.08, 0) -- Smaller
+    tabButton.Position = UDim2.new(0.02, 0, 0.2 + (i - 1) * 0.1, 0) -- Left side
     tabButton.Text = tabName
     tabButton.TextScaled = true
     tabButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    tabButton.TextColor3 = Color3.fromRGB(0, 150, 255)
+    tabButton.TextColor3 = Color3.fromRGB(0, 150, 255) -- Blue Text
     tabButton.Parent = nsFrame
 
     -- Rounded corners for tabs
@@ -72,82 +90,56 @@ for i, tabName in ipairs(tabNames) do
     tabButtons[tabName] = tabButton
 end
 
--- Create Tab Content
-local homeContent = Instance.new("Frame")
-homeContent.Size = UDim2.new(1, 0, 0.6, 0)
-homeContent.Position = UDim2.new(0, 0, 0.3, 0)
-homeContent.BackgroundTransparency = 1
-homeContent.Visible = true  -- Initially visible
-homeContent.Parent = nsFrame
+-- Create Home Content (NS Text)
+local homeText = Instance.new("TextLabel")
+homeText.Size = UDim2.new(1, 0, 0.6, 0)
+homeText.Position = UDim2.new(0, 0, 0.3, 0)
+homeText.Text = "NS"
+homeText.TextColor3 = Color3.new(1, 1, 1)
+homeText.TextScaled = true
+homeText.Font = Enum.Font.GothamBold
+homeText.BackgroundTransparency = 1
+homeText.Parent = nsFrame
 
-local tpContent = Instance.new("Frame")
-tpContent.Size = UDim2.new(1, 0, 0.6, 0)
-tpContent.Position = UDim2.new(0, 0, 0.3, 0)
-tpContent.BackgroundTransparency = 1
-tpContent.Visible = false  -- Initially hidden
-tpContent.Parent = nsFrame
+-- Create TP Content (Coming Soon + Back Button)
+local tpFrame = Instance.new("Frame")
+tpFrame.Size = UDim2.new(1, 0, 0.6, 0)
+tpFrame.Position = UDim2.new(0, 0, 0.3, 0)
+tpFrame.BackgroundTransparency = 1
+tpFrame.Visible = false
+tpFrame.Parent = nsFrame
 
-local miscContent = Instance.new("Frame")
-miscContent.Size = UDim2.new(1, 0, 0.6, 0)
-miscContent.Position = UDim2.new(0, 0, 0.3, 0)
-miscContent.BackgroundTransparency = 1
-miscContent.Visible = false  -- Initially hidden
-miscContent.Parent = nsFrame
-
--- Home Content (Ping, FPS, Health)
-local pingLabel = Instance.new("TextLabel")
-pingLabel.Size = UDim2.new(0.5, 0, 0.07, 0)
-pingLabel.Position = UDim2.new(0.02, 0, 0.01, 0)
-pingLabel.Text = "Ping: " .. player.NetworkPing
-pingLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-pingLabel.TextScaled = true
-pingLabel.Font = Enum.Font.Gotham
-pingLabel.BackgroundTransparency = 1
-pingLabel.Parent = homeContent
-
-local fpsLabel = Instance.new("TextLabel")
-fpsLabel.Size = UDim2.new(0.5, 0, 0.07, 0)
-fpsLabel.Position = UDim2.new(0.02, 0, 0.08, 0)
-fpsLabel.Text = "FPS: 60"  -- Adjust FPS as needed
-fpsLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-fpsLabel.TextScaled = true
-fpsLabel.Font = Enum.Font.Gotham
-fpsLabel.BackgroundTransparency = 1
-fpsLabel.Parent = homeContent
-
-local healthLabel = Instance.new("TextLabel")
-healthLabel.Size = UDim2.new(0.5, 0, 0.07, 0)
-healthLabel.Position = UDim2.new(0.02, 0, 0.15, 0)
-healthLabel.Text = "Health: " .. player.Character.Humanoid.Health
-healthLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-healthLabel.TextScaled = true
-healthLabel.Font = Enum.Font.Gotham
-healthLabel.BackgroundTransparency = 1
-healthLabel.Parent = homeContent
-
--- NS Label on Home
-local nsLabel = Instance.new("TextLabel")
-nsLabel.Size = UDim2.new(0.5, 0, 0.07, 0)
-nsLabel.Position = UDim2.new(0.02, 0, 0.22, 0)
-nsLabel.Text = "NS"
-nsLabel.TextColor3 = Color3.fromRGB(0, 0, 128)
-nsLabel.TextScaled = true
-nsLabel.Font = Enum.Font.Gotham
-nsLabel.BackgroundTransparency = 1
-nsLabel.Parent = homeContent
-
--- TP Content (Proxima Hangout check)
 local tpText = Instance.new("TextLabel")
 tpText.Size = UDim2.new(1, 0, 0.3, 0)
 tpText.Position = UDim2.new(0, 0, 0.1, 0)
 tpText.Text = "Coming Soon"
-tpText.TextColor3 = Color3.fromRGB(0, 150, 255)
+tpText.TextColor3 = Color3.fromRGB(0, 150, 255) -- Blue Text
 tpText.TextScaled = true
 tpText.Font = Enum.Font.GothamBold
 tpText.BackgroundTransparency = 1
-tpText.Parent = tpContent
+tpText.Parent = tpFrame
 
--- Rejoin Button in Misc Tab
+local backButton = Instance.new("TextButton")
+backButton.Size = UDim2.new(0.5, 0, 0.2, 0)
+backButton.Position = UDim2.new(0.25, 0, 0.6, 0)
+backButton.Text = "Back to Home"
+backButton.TextScaled = true
+backButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+backButton.TextColor3 = Color3.new(1, 1, 1)
+backButton.Parent = tpFrame
+
+local backCorner = Instance.new("UICorner")
+backCorner.CornerRadius = UDim.new(0.3, 0)
+backCorner.Parent = backButton
+
+-- Create Misc Content
+local miscFrame = Instance.new("Frame")
+miscFrame.Size = UDim2.new(1, 0, 0.6, 0)
+miscFrame.Position = UDim2.new(0, 0, 0.3, 0)
+miscFrame.BackgroundTransparency = 1
+miscFrame.Visible = false
+miscFrame.Parent = nsFrame
+
 local rejoinButton = Instance.new("TextButton")
 rejoinButton.Size = UDim2.new(0.5, 0, 0.2, 0)
 rejoinButton.Position = UDim2.new(0.25, 0, 0.6, 0)
@@ -155,35 +147,46 @@ rejoinButton.Text = "Rejoin"
 rejoinButton.TextScaled = true
 rejoinButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 rejoinButton.TextColor3 = Color3.new(1, 1, 1)
-rejoinButton.Visible = false  -- Initially hidden
-rejoinButton.Parent = miscContent
+rejoinButton.Parent = miscFrame
 
--- Rejoin Button Functionality
-rejoinButton.MouseButton1Click:Connect(function()
-    game:GetService("TeleportService"):Teleport(game.PlaceId, player)
+local rejoinCorner = Instance.new("UICorner")
+rejoinCorner.CornerRadius = UDim.new(0.3, 0)
+rejoinCorner.Parent = rejoinButton
+
+-- NS Button Spin Animation
+local function spinButton()
+    for i = 0, 360, 30 do
+        button.Rotation = i
+        wait(0.02)
+    end
+    button.Rotation = 0
+end
+
+-- Toggle UI with Animation
+button.MouseButton1Click:Connect(function()
+    spinButton() -- Spin animation
+    
+    if nsFrame.Visible then
+        nsFrame.Visible = false
+    else
+        nsFrame.Visible = true
+    end
 end)
 
 -- Tab Switching Logic
 tabButtons["Home"].MouseButton1Click:Connect(function()
-    homeContent.Visible = true
-    tpContent.Visible = false
-    miscContent.Visible = false
+    homeText.Visible = true
+    tpFrame.Visible = false
+    miscFrame.Visible = false
 end)
 
 tabButtons["Tp"].MouseButton1Click:Connect(function()
-    homeContent.Visible = false
-    tpContent.Visible = true
-    miscContent.Visible = false
+    homeText.Visible = false
+    tpFrame.Visible = true
+    miscFrame.Visible = false
 end)
 
 tabButtons["Misc"].MouseButton1Click:Connect(function()
-    homeContent.Visible = false
-    tpContent.Visible = false
-    miscContent.Visible = true
-    rejoinButton.Visible = true  -- Show rejoin button in misc tab
-end)
-
--- NS Button Toggle
-button.MouseButton1Click:Connect(function()
-    nsFrame.Visible = not nsFrame.Visible
-end)
+    homeText.Visible = false
+    tpFrame.Visible = false
+    miscFrame.Visibl
