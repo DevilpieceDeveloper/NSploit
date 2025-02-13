@@ -1,11 +1,12 @@
 local player = game.Players.LocalPlayer
 local gui = Instance.new("ScreenGui")
 gui.Name = "NSPLO1t"
+gui.ResetOnSpawn = false -- Prevent removal on death
 gui.Parent = player:WaitForChild("PlayerGui")
 
--- Create NS Button (Main Toggle Button)
+-- Create NS Button
 local button = Instance.new("TextButton")
-button.Size = UDim2.new(0, 80, 0, 40) -- Made smaller
+button.Size = UDim2.new(0, 80, 0, 40)
 button.Position = UDim2.new(0.1, 0, 0.1, 0)
 button.Text = "NS"
 button.TextScaled = true
@@ -13,134 +14,143 @@ button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 button.TextColor3 = Color3.new(1, 1, 1)
 button.Parent = gui
 
--- Rounded corners for NS button
-local buttonCorner = Instance.new("UICorner")
-buttonCorner.CornerRadius = UDim.new(0.3, 0)
-buttonCorner.Parent = button
+-- Make UI Draggable
+local function makeDraggable(frame, button)
+    local dragging, dragInput, startPos, startInputPos
 
--- Create NS Frame (Main UI)
+    local function update(input)
+        local delta = input.Position - startInputPos
+        frame.Position = UDim2.new(
+            startPos.X.Scale, startPos.X.Offset + delta.X,
+            startPos.Y.Scale, startPos.Y.Offset + delta.Y
+        )
+    end
+
+    button.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            startPos = frame.Position
+            startInputPos = input.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    button.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            dragInput = input
+        end
+    end)
+
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            update(input)
+        end
+    end)
+end
+
+-- Create NS Frame
 local nsFrame = Instance.new("Frame")
 nsFrame.Size = UDim2.new(0.4, 0, 0.4, 0)
 nsFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
 nsFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-nsFrame.Visible = true  -- Ensure the frame is visible
-nsFrame.BackgroundTransparency = 1 -- Start hidden for animation
+nsFrame.Visible = false
 nsFrame.Parent = gui
 
--- Rounded corners for NS Frame
-local nsFrameCorner = Instance.new("UICorner")
-nsFrameCorner.CornerRadius = UDim.new(0.1, 0)
-nsFrameCorner.Parent = nsFrame
+-- Make the frame draggable
+makeDraggable(nsFrame, nsFrame)
 
--- Version Label (NS, v0.1∞)
-local versionText = Instance.new("TextLabel")
-versionText.Size = UDim2.new(0.5, 0, 0.07, 0)
-versionText.Position = UDim2.new(0.02, 0, 0.01, 0)
-versionText.Text = "NS, v0.1∞"
-versionText.TextColor3 = Color3.fromRGB(200, 200, 200)
-versionText.TextScaled = true
-versionText.Font = Enum.Font.Gotham
-versionText.BackgroundTransparency = 1
-versionText.TextXAlignment = Enum.TextXAlignment.Left
-versionText.Parent = nsFrame
-
--- Welcome Message (Smaller)
-local welcomeText = Instance.new("TextLabel")
-welcomeText.Size = UDim2.new(0.5, 0, 0.07, 0)
-welcomeText.Position = UDim2.new(0.02, 0, 0.08, 0)
-welcomeText.Text = "Welcome, " .. player.Name
-welcomeText.TextColor3 = Color3.fromRGB(200, 200, 200)
-welcomeText.TextScaled = true
-welcomeText.Font = Enum.Font.Gotham
-welcomeText.BackgroundTransparency = 1
-welcomeText.TextXAlignment = Enum.TextXAlignment.Left
-welcomeText.Parent = nsFrame
-
--- Game Name Label (Smaller)
-local gameText = Instance.new("TextLabel")
-gameText.Size = UDim2.new(0.5, 0, 0.06, 0)
-gameText.Position = UDim2.new(0.02, 0, 0.14, 0)
-gameText.Text = "Game: " .. game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
-gameText.TextColor3 = Color3.fromRGB(180, 180, 180)
-gameText.TextScaled = true
-gameText.Font = Enum.Font.Gotham
-gameText.BackgroundTransparency = 1
-gameText.TextXAlignment = Enum.TextXAlignment.Left
-gameText.Parent = nsFrame
-
--- Create Tab Buttons (Smaller, Left-Side)
+-- Create Tabs
 local tabNames = {"Home", "Tp", "Misc"}
 local tabButtons = {}
+local homeText, tpFrame, miscFrame, rejoinButton
 
 for i, tabName in ipairs(tabNames) do
     local tabButton = Instance.new("TextButton")
-    tabButton.Size = UDim2.new(0.1, 0, 0.08, 0) -- Smaller
-    tabButton.Position = UDim2.new(0.02, 0, 0.2 + (i - 1) * 0.1, 0) -- Left side
+    tabButton.Size = UDim2.new(0.1, 0, 0.08, 0)
+    tabButton.Position = UDim2.new(0.02, 0, 0.2 + (i - 1) * 0.1, 0)
     tabButton.Text = tabName
     tabButton.TextScaled = true
     tabButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    tabButton.TextColor3 = Color3.fromRGB(0, 150, 255) -- Blue Text
+    tabButton.TextColor3 = Color3.fromRGB(0, 150, 255)
     tabButton.Parent = nsFrame
-
-    -- Rounded corners for tabs
-    local tabCorner = Instance.new("UICorner")
-    tabCorner.CornerRadius = UDim.new(0.3, 0)
-    tabCorner.Parent = tabButton
-
     tabButtons[tabName] = tabButton
 end
 
--- Create Home Content (NS Text)
-local homeText = Instance.new("TextLabel")
+-- Home Tab
+homeText = Instance.new("TextLabel")
 homeText.Size = UDim2.new(1, 0, 0.6, 0)
 homeText.Position = UDim2.new(0, 0, 0.3, 0)
 homeText.Text = "NS"
-homeText.TextColor3 = Color3.new(1, 1, 1)
+homeText.TextColor3 = Color3.new(0, 0, 0.5) -- Navy blue text
 homeText.TextScaled = true
 homeText.Font = Enum.Font.GothamBold
 homeText.BackgroundTransparency = 1
 homeText.Parent = nsFrame
 
--- Create TP Content (Coming Soon + Back Button)
-local tpFrame = Instance.new("Frame")
+-- Stats on Home Tab
+local statsText = Instance.new("TextLabel")
+statsText.Size = UDim2.new(1, 0, 0.2, 0)
+statsText.Position = UDim2.new(0, 0, 0.6, 0)
+statsText.TextColor3 = Color3.new(1, 1, 1)
+statsText.TextScaled = true
+statsText.Font = Enum.Font.Gotham
+statsText.BackgroundTransparency = 1
+statsText.Parent = nsFrame
+
+game:GetService("RunService").RenderStepped:Connect(function()
+    local ping = game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue()
+    local fps = math.floor(1 / game:GetService("RunService").RenderStepped:Wait())
+    local health = player.Character and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health or "N/A"
+    statsText.Text = "Ping: " .. math.floor(ping) .. "ms | FPS: " .. fps .. " | Health: " .. health
+end)
+
+-- TP Tab
+tpFrame = Instance.new("Frame")
 tpFrame.Size = UDim2.new(1, 0, 0.6, 0)
 tpFrame.Position = UDim2.new(0, 0, 0.3, 0)
 tpFrame.BackgroundTransparency = 1
 tpFrame.Visible = false
 tpFrame.Parent = nsFrame
 
-local tpText = Instance.new("TextLabel")
-tpText.Size = UDim2.new(1, 0, 0.3, 0)
-tpText.Position = UDim2.new(0, 0, 0.1, 0)
-tpText.Text = "Coming Soon"
-tpText.TextColor3 = Color3.fromRGB(0, 150, 255) -- Blue Text
-tpText.TextScaled = true
-tpText.Font = Enum.Font.GothamBold
-tpText.BackgroundTransparency = 1
-tpText.Parent = tpFrame
+if game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name == "Proxima Hangout" then
+    local topCubeButton = Instance.new("TextButton")
+    topCubeButton.Size = UDim2.new(0.6, 0, 0.2, 0)
+    topCubeButton.Position = UDim2.new(0.2, 0, 0.5, 0)
+    topCubeButton.Text = "Top Cube"
+    topCubeButton.TextScaled = true
+    topCubeButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    topCubeButton.TextColor3 = Color3.new(1, 1, 1)
+    topCubeButton.Parent = tpFrame
+    topCubeButton.Visible = false
 
-local backButton = Instance.new("TextButton")
-backButton.Size = UDim2.new(0.5, 0, 0.2, 0)
-backButton.Position = UDim2.new(0.25, 0, 0.6, 0)
-backButton.Text = "Back to Home"
-backButton.TextScaled = true
-backButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-backButton.TextColor3 = Color3.new(1, 1, 1)
-backButton.Parent = tpFrame
+    topCubeButton.MouseButton1Click:Connect(function()
+        local destination = game.Workspace:FindFirstChild("TeleportDestination")
+        if destination then
+            player.Character:SetPrimaryPartCFrame(destination.CFrame)
+        end
+    end)
 
-local backCorner = Instance.new("UICorner")
-backCorner.CornerRadius = UDim.new(0.3, 0)
-backCorner.Parent = backButton
+    tabButtons["Tp"].MouseButton1Click:Connect(function()
+        homeText.Visible = false
+        tpFrame.Visible = true
+        topCubeButton.Visible = true
+    end)
+end
 
--- Create Misc Content
-local miscFrame = Instance.new("Frame")
+-- Misc Tab
+miscFrame = Instance.new("Frame")
 miscFrame.Size = UDim2.new(1, 0, 0.6, 0)
 miscFrame.Position = UDim2.new(0, 0, 0.3, 0)
 miscFrame.BackgroundTransparency = 1
 miscFrame.Visible = false
 miscFrame.Parent = nsFrame
 
-local rejoinButton = Instance.new("TextButton")
+rejoinButton = Instance.new("TextButton")
 rejoinButton.Size = UDim2.new(0.5, 0, 0.2, 0)
 rejoinButton.Position = UDim2.new(0.25, 0, 0.6, 0)
 rejoinButton.Text = "Rejoin"
@@ -148,45 +158,39 @@ rejoinButton.TextScaled = true
 rejoinButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 rejoinButton.TextColor3 = Color3.new(1, 1, 1)
 rejoinButton.Parent = miscFrame
+rejoinButton.Visible = false
 
-local rejoinCorner = Instance.new("UICorner")
-rejoinCorner.CornerRadius = UDim.new(0.3, 0)
-rejoinCorner.Parent = rejoinButton
-
--- NS Button Spin Animation
-local function spinButton()
-    for i = 0, 360, 30 do
-        button.Rotation = i
-        wait(0.02)
-    end
-    button.Rotation = 0
-end
-
--- Toggle UI with Animation
-button.MouseButton1Click:Connect(function()
-    spinButton() -- Spin animation
-    
-    if nsFrame.Visible then
-        nsFrame.Visible = false
-    else
-        nsFrame.Visible = true
-    end
+rejoinButton.MouseButton1Click:Connect(function()
+    rejoinButton.Text = "Rejoining..."
+    rejoinButton.TextColor3 = Color3.fromRGB(100, 100, 100)
+    rejoinButton.Active = false
+    wait(0.5)
+    game:GetService("TeleportService"):Teleport(game.PlaceId, player)
 end)
 
--- Tab Switching Logic
+-- Toggle UI
+button.MouseButton1Click:Connect(function()
+    nsFrame.Visible = not nsFrame.Visible
+end)
+
+-- Tab Switching
 tabButtons["Home"].MouseButton1Click:Connect(function()
     homeText.Visible = true
     tpFrame.Visible = false
     miscFrame.Visible = false
+    rejoinButton.Visible = false
 end)
 
 tabButtons["Tp"].MouseButton1Click:Connect(function()
     homeText.Visible = false
     tpFrame.Visible = true
     miscFrame.Visible = false
+    rejoinButton.Visible = false
 end)
 
 tabButtons["Misc"].MouseButton1Click:Connect(function()
     homeText.Visible = false
     tpFrame.Visible = false
-    miscFrame.Visibl
+    miscFrame.Visible = true
+    rejoinButton.Visible = true
+end)
