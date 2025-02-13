@@ -166,4 +166,24 @@ end)
 -- Tab Switching Logic
 tabButtons["Home"].MouseButton1Click:Connect(function()
     homeContent.Visible = true
-    tpContent.Visible = fals
+    tpContent.Visible = false
+    miscContent.Visible = false
+end)
+
+tabButtons["Tp"].MouseButton1Click:Connect(function()
+    homeContent.Visible = false
+    tpContent.Visible = true
+    miscContent.Visible = false
+end)
+
+tabButtons["Misc"].MouseButton1Click:Connect(function()
+    homeContent.Visible = false
+    tpContent.Visible = false
+    miscContent.Visible = true
+    rejoinButton.Visible = true  -- Show rejoin button in misc tab
+end)
+
+-- NS Button Toggle
+button.MouseButton1Click:Connect(function()
+    nsFrame.Visible = not nsFrame.Visible
+end)
