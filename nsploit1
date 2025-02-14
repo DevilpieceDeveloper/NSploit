@@ -1,62 +1,173 @@
--- Rejoin UI (Disconnect-Style)
-local rejoinFrame = Instance.new("Frame")
-rejoinFrame.Size = UDim2.new(0.4, 0, 0.25, 0)
-rejoinFrame.Position = UDim2.new(0.3, 0, 0.35, 0)
-rejoinFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-rejoinFrame.Visible = false
-rejoinFrame.Parent = tabFrames["Misc"]
+local player = game.Players.LocalPlayer
+local gui = Instance.new("ScreenGui")
+gui.Name = "NSPLO1t"
+gui.Parent = player:WaitForChild("PlayerGui")
 
-local rejoinFrameCorner = Instance.new("UICorner")
-rejoinFrameCorner.CornerRadius = UDim.new(0.1, 0)
-rejoinFrameCorner.Parent = rejoinFrame
+-- NS Button
+local button = Instance.new("TextButton")
+button.Size = UDim2.new(0, 80, 0, 40)
+button.Position = UDim2.new(0.1, 0, 0.1, 0)
+button.Text = ""
+button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+button.TextColor3 = Color3.new(1, 1, 1)
+button.Parent = gui
 
--- Rejoin Message
-local rejoinText = Instance.new("TextLabel")
-rejoinText.Size = UDim2.new(1, 0, 0.4, 0)
-rejoinText.Position = UDim2.new(0, 0, 0.05, 0)
-rejoinText.Text = "Connection Lost\nWould you like to reconnect?"
-rejoinText.TextScaled = true
-rejoinText.TextColor3 = Color3.fromRGB(255, 255, 255)
-rejoinText.BackgroundTransparency = 1
-rejoinText.Parent = rejoinFrame
+local buttonCorner = Instance.new("UICorner")
+buttonCorner.CornerRadius = UDim.new(0.3, 0)
+buttonCorner.Parent = button
 
--- Reconnect Button
-local reconnectButton = Instance.new("TextButton")
-reconnectButton.Size = UDim2.new(0.8, 0, 0.2, 0)
-reconnectButton.Position = UDim2.new(0.1, 0, 0.5, 0)
-reconnectButton.Text = "Reconnect"
-reconnectButton.TextScaled = true
-reconnectButton.TextColor3 = Color3.fromRGB(0, 200, 0)
-reconnectButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-reconnectButton.Parent = rejoinFrame
+-- Main UI Frame
+local nsFrame = Instance.new("Frame")
+nsFrame.Size = UDim2.new(0.4, 0, 0.4, 0)
+nsFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
+nsFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+nsFrame.Visible = true
+nsFrame.Parent = gui
 
--- Exit Button
-local exitButton = Instance.new("TextButton")
-exitButton.Size = UDim2.new(0.8, 0, 0.2, 0)
-exitButton.Position = UDim2.new(0.1, 0, 0.75, 0)
-exitButton.Text = "Exit Game"
-exitButton.TextScaled = true
-exitButton.TextColor3 = Color3.fromRGB(200, 0, 0)
-exitButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-exitButton.Parent = rejoinFrame
+local nsFrameCorner = Instance.new("UICorner")
+nsFrameCorner.CornerRadius = UDim.new(0.1, 0)
+nsFrameCorner.Parent = nsFrame
 
--- Rejoin Button (Opens the UI)
-local rejoinButton = Instance.new("TextButton")
-rejoinButton.Size = UDim2.new(0.8, 0, 0.1, 0)
-rejoinButton.Position = UDim2.new(0.1, 0, 0.1, 0)
-rejoinButton.Text = "Rejoin"
-rejoinButton.TextColor3 = Color3.fromRGB(0, 0, 128)
-rejoinButton.Parent = tabFrames["Misc"]
+-- Tabs
+local tabNames = {"Home", "Tp", "Misc", "Settings"}
+local tabButtons = {}
+local tabFrames = {}
 
--- Button Logic
-rejoinButton.MouseButton1Click:Connect(function()
-    rejoinFrame.Visible = true
+for i, tabName in ipairs(tabNames) do
+    local tabButton = Instance.new("TextButton")
+    tabButton.Size = UDim2.new(0.1, 0, 0.08, 0)
+    tabButton.Position = UDim2.new(0.02, 0, 0.2 + (i - 1) * 0.1, 0)
+    tabButton.Text = tabName
+    tabButton.TextScaled = true
+    tabButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    tabButton.TextColor3 = Color3.fromRGB(0, 0, 128)
+    tabButton.Parent = nsFrame
+
+    local tabCorner = Instance.new("UICorner")
+    tabCorner.CornerRadius = UDim.new(0.3, 0)
+    tabCorner.Parent = tabButton
+
+    local tabFrame = Instance.new("Frame")
+    tabFrame.Size = UDim2.new(1, 0, 0.6, 0)
+    tabFrame.Position = UDim2.new(0, 0, 0.3, 0)
+    tabFrame.BackgroundTransparency = 1
+    tabFrame.Visible = (i == 1)
+    tabFrame.Parent = nsFrame
+
+    tabButtons[tabName] = tabButton
+    tabFrames[tabName] = tabFrame
+end
+
+-- Home Tab
+local gameText = Instance.new("TextLabel")
+gameText.Size = UDim2.new(0.5, 0, 0.06, 0)
+gameText.Position = UDim2.new(0.02, 0, 0.02, 0)
+gameText.Text = "Game: " .. game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+gameText.TextColor3 = Color3.fromRGB(0, 0, 128)
+gameText.TextScaled = true
+gameText.BackgroundTransparency = 1
+gameText.Parent = tabFrames["Home"]
+
+local usernameText = Instance.new("TextLabel")
+usernameText.Size = UDim2.new(0.5, 0, 0.06, 0)
+usernameText.Position = UDim2.new(0.02, 0, 0.1, 0)
+usernameText.Text = "User: " .. player.Name
+usernameText.TextColor3 = Color3.fromRGB(0, 0, 128)
+usernameText.TextScaled = true
+usernameText.BackgroundTransparency = 1
+usernameText.Parent = tabFrames["Home"]
+
+local stats = {"Ping", "FPS", "Health"}
+for i, stat in ipairs(stats) do
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0.8, 0, 0.1, 0)
+    frame.Position = UDim2.new(0.1, 0, 0.2 + (i - 1) * 0.15, 0)
+    frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    frame.Parent = tabFrames["Home"]
+
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Size = UDim2.new(1, 0, 1, 0)
+    textLabel.Text = stat .. ": Loading..."
+    textLabel.TextColor3 = Color3.fromRGB(0, 0, 128)
+    textLabel.TextScaled = true
+    textLabel.BackgroundTransparency = 1
+    textLabel.Parent = frame
+
+    if stat == "Ping" then
+        game:GetService("RunService").Heartbeat:Connect(function()
+            textLabel.Text = "Ping: " .. math.floor(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue()) .. " ms"
+        end)
+    elseif stat == "FPS" then
+        game:GetService("RunService").RenderStepped:Connect(function(delta)
+            textLabel.Text = "FPS: " .. math.floor(1 / delta)
+        end)
+    elseif stat == "Health" then
+        player.CharacterAdded:Connect(function(char)
+            local humanoid = char:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                humanoid:GetPropertyChangedSignal("Health"):Connect(function()
+                    textLabel.Text = "Health: " .. math.floor(humanoid.Health)
+                end)
+            end
+        end)
+    end
+end
+
+-- TP Tab
+local playerDropdown = Instance.new("TextButton")
+playerDropdown.Size = UDim2.new(0.8, 0, 0.1, 0)
+playerDropdown.Position = UDim2.new(0.1, 0, 0.1, 0)
+playerDropdown.Text = "Select Player"
+playerDropdown.TextColor3 = Color3.fromRGB(0, 0, 128)
+playerDropdown.Parent = tabFrames["Tp"]
+
+local teleportButton = Instance.new("TextButton")
+teleportButton.Size = UDim2.new(0.8, 0, 0.1, 0)
+teleportButton.Position = UDim2.new(0.1, 0, 0.3, 0)
+teleportButton.Text = "Teleport"
+teleportButton.TextColor3 = Color3.fromRGB(0, 0, 128)
+teleportButton.Parent = tabFrames["Tp"]
+
+local selectedPlayer = nil
+playerDropdown.MouseButton1Click:Connect(function()
+    local players = game.Players:GetPlayers()
+    for _, p in ipairs(players) do
+        if p ~= player then
+            selectedPlayer = p
+            playerDropdown.Text = "To: " .. p.Name
+            break
+        end
+    end
 end)
 
-reconnectButton.MouseButton1Click:Connect(function()
-    game:GetService("TeleportService"):Teleport(game.PlaceId, player)
+teleportButton.MouseButton1Click:Connect(function()
+    if selectedPlayer and selectedPlayer.Character then
+        player.Character:SetPrimaryPartCFrame(selectedPlayer.Character:GetPrimaryPartCFrame())
+    end
 end)
 
-exitButton.MouseButton1Click:Connect(function()
-    player:Kick("Rejoin is in development. For now, we just kick you :D")
+-- Settings Tab
+local removeTexturesButton = Instance.new("TextButton")
+removeTexturesButton.Size = UDim2.new(0.8, 0, 0.1, 0)
+removeTexturesButton.Position = UDim2.new(0.1, 0, 0.1, 0)
+removeTexturesButton.Text = "Remove All Textures"
+removeTexturesButton.TextColor3 = Color3.fromRGB(0, 0, 128)
+removeTexturesButton.Parent = tabFrames["Settings"]
+
+removeTexturesButton.MouseButton1Click:Connect(function()
+    for _, part in ipairs(workspace:GetDescendants()) do
+        if part:IsA("Texture") or part:IsA("Decal") then
+            part:Destroy()
+        end
+    end
 end)
+
+-- Tab Switching
+for name, button in pairs(tabButtons) do
+    button.MouseButton1Click:Connect(function()
+        for _, frame in pairs(tabFrames) do
+            frame.Visible = false
+        end
+        tabFrames[name].Visible = true
+    end)
+end
