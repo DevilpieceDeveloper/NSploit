@@ -1,24 +1,62 @@
--- Consider renaming "NSPLO1t" to something more descriptive for clarity.
-gui.Name = "NSPLO1t"
+-- Rejoin UI (Disconnect-Style)
+local rejoinFrame = Instance.new("Frame")
+rejoinFrame.Size = UDim2.new(0.4, 0, 0.25, 0)
+rejoinFrame.Position = UDim2.new(0.3, 0, 0.35, 0)
+rejoinFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+rejoinFrame.Visible = false
+rejoinFrame.Parent = tabFrames["Misc"]
 
--- Instead of setting 'nsFrame.Visible = true', you might want to make it false initially to prevent unintended visibility.
-nsFrame.Visible = true
+local rejoinFrameCorner = Instance.new("UICorner")
+rejoinFrameCorner.CornerRadius = UDim.new(0.1, 0)
+rejoinFrameCorner.Parent = rejoinFrame
 
--- 'GetProductInfo()' is being called every time this script runs, which may be inefficient. Consider caching the game name instead.
-if game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name == "Blox Fruits" then
+-- Rejoin Message
+local rejoinText = Instance.new("TextLabel")
+rejoinText.Size = UDim2.new(1, 0, 0.4, 0)
+rejoinText.Position = UDim2.new(0, 0, 0.05, 0)
+rejoinText.Text = "Connection Lost\nWould you like to reconnect?"
+rejoinText.TextScaled = true
+rejoinText.TextColor3 = Color3.fromRGB(255, 255, 255)
+rejoinText.BackgroundTransparency = 1
+rejoinText.Parent = rejoinFrame
 
--- The dropdown update logic replaces 'MouseButton1Click' handlers multiple times, causing potential memory leaks.
-dropdown.MouseButton1Click:Connect(function()
-    dropdown.Text = "Loading..."
-    local players = game.Players:GetPlayers()
-    for _, p in ipairs(players) do
-        if p ~= player then
-            dropdown.Text = p.Name
-            dropdown.MouseButton1Click:Connect(function()
-                noclipTo(p)
-            end) -- This creates multiple event connections over time.
-        end
-    end
+-- Reconnect Button
+local reconnectButton = Instance.new("TextButton")
+reconnectButton.Size = UDim2.new(0.8, 0, 0.2, 0)
+reconnectButton.Position = UDim2.new(0.1, 0, 0.5, 0)
+reconnectButton.Text = "Reconnect"
+reconnectButton.TextScaled = true
+reconnectButton.TextColor3 = Color3.fromRGB(0, 200, 0)
+reconnectButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+reconnectButton.Parent = rejoinFrame
+
+-- Exit Button
+local exitButton = Instance.new("TextButton")
+exitButton.Size = UDim2.new(0.8, 0, 0.2, 0)
+exitButton.Position = UDim2.new(0.1, 0, 0.75, 0)
+exitButton.Text = "Exit Game"
+exitButton.TextScaled = true
+exitButton.TextColor3 = Color3.fromRGB(200, 0, 0)
+exitButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+exitButton.Parent = rejoinFrame
+
+-- Rejoin Button (Opens the UI)
+local rejoinButton = Instance.new("TextButton")
+rejoinButton.Size = UDim2.new(0.8, 0, 0.1, 0)
+rejoinButton.Position = UDim2.new(0.1, 0, 0.1, 0)
+rejoinButton.Text = "Rejoin"
+rejoinButton.TextColor3 = Color3.fromRGB(0, 0, 128)
+rejoinButton.Parent = tabFrames["Misc"]
+
+-- Button Logic
+rejoinButton.MouseButton1Click:Connect(function()
+    rejoinFrame.Visible = true
 end)
 
--- Instead of instantly teleporting the player in 'noclipTo()', consider implementing a smooth movement effect to improve user experience.
+reconnectButton.MouseButton1Click:Connect(function()
+    game:GetService("TeleportService"):Teleport(game.PlaceId, player)
+end)
+
+exitButton.MouseButton1Click:Connect(function()
+    player:Kick("Rejoin is in development. For now, we just kick you :D")
+end)
